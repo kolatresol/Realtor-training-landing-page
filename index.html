@@ -1900,6 +1900,26 @@
     btn.style.opacity = '0.8';
     btn.disabled = true;
 
+    // Shared event ID lets Meta de-duplicate the browser (Pixel) and
+    // server (Conversions API) copies of this same Lead event.
+    var eventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', {}, { eventID: eventId });
+    }
+
+    fetch('/api/conversion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventName: 'Lead',
+        eventId: eventId,
+        eventSourceUrl: window.location.href
+      })
+    }).catch(function (err) {
+      console.warn('CAPI relay failed (non-blocking):', err);
+    });
+
     setTimeout(function() {
       window.open(WA_LINK, '_blank');
       closeModal();
