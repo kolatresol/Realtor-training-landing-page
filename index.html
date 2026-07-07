@@ -1920,6 +1920,14 @@
       console.warn('CAPI relay failed (non-blocking):', err);
     });
 
+    fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, phone: phone, email: email })
+    }).catch(function (err) {
+      console.warn('Lead email notification failed (non-blocking):', err);
+    });
+
     setTimeout(function() {
       window.open(WA_LINK, '_blank');
       closeModal();
